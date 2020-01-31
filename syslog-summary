@@ -45,7 +45,6 @@ version = "2.0"
 import sys
 import re
 import getopt
-import string
 import hashlib
 from gzip import open as gzopen
 
@@ -102,8 +101,8 @@ def read_states(filename):
 		io_error(e, filename, False)
 		return states
 	for line in f:
-		fields = string.split(line)
-		states[fields[0]] = (string.atoi(fields[1]), fields[2])
+		fields = line.split()
+		states[fields[0]] = (int(fields[1]), fields[2])
 	f.close()
 	return states
 
@@ -179,7 +178,7 @@ def summarize(filename, states):
 		oldlines, oldsha = states[filename]
 		for i in range(oldlines):
 			line = file.readline()
-			shaobj.update(line)
+			shaobj.update(line.encode('utf-8'))
 		print("OLD-new: %s" % shaobj.hexdigest())
 		print("OLD-file: %s" % oldsha)
 		if shaobj.hexdigest() != oldsha:
