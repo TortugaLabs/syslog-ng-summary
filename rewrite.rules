@@ -1,0 +1,4 @@
+#
+# Some useful rewriting rules...
+#
+/pid:?\s*\d+/<PID>/i

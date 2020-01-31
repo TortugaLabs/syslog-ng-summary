@@ -1,137 +1,243 @@
-.\"     Title: SYSLOG-SUMMARY
-.\"    Author: Lars Wirzenius <liw@iki.fi>
-.\" Generator: DocBook XSL Stylesheets v1.73.2 <http://docbook.sf.net/>
-.\"      Date: 02/07/2008
-.\"    Manual: Syslog-Summary User Manual
+'\" t
+.\"     Title: syslog-summary
+.\"    Author: Lars Wirzenius
+.\" Generator: Asciidoctor 2.0.10
+.\"      Date: 2020-01-31
+.\"    Manual: User commands
 .\"    Source: syslog-summary
+.\"  Language: English
 .\"
-.TH "SYSLOG\-SUMMARY" "1" "02/07/2008" "syslog-summary" "Syslog-Summary User Manual"
-.\" disable hyphenation
+.TH "SYSLOG\-SUMMARY" "1" "2020-01-31" "syslog\-summary" "User commands"
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.ss \n[.ss] 0
 .nh
-.\" disable justification (adjust text to left margin only)
 .ad l
+.de URL
+\fI\\$2\fP <\\$1>\\$3
+..
+.als MTO URL
+.if \n[.g] \{\
+.  mso www.tmac
+.  am URL
+.    ad l
+.  .
+.  am MTO
+.    ad l
+.  .
+.  LINKSTYLE blue R < >
+.\}
 .SH "NAME"
-syslog-summary - summarize the contents of a syslog log file
+syslog\-summary \- summarize the contents of a syslog log file
 .SH "SYNOPSIS"
-.HP 15
-\fBsyslog\-summary\fR [\fB\-s\fR\ |\ \fB\-\-state=\fR\ \fIfilename\fR] [\fB\-i\fR\ |\ \fB\-\-ignore=\fR\ \fIfilename\fR] [\fB\-d\fR\ |\ \fB\-\-debug\fR] [\fB\-r\fR\ |\ \fB\-\-repeat\fR] \fIlogfile\fR...
-.HP 15
-\fBsyslog\-summary\fR [\fB\-h\fR\ |\ \fB\-\-help\fR]
+.sp
+\fBsyslog\-summary\fP [\-s | \-\-state= filename] [\-i | \-\-ignore= filename] [\-R | \-\-rewrite= filename] [\-d | \-\-debug] [\-r | \-\-repeat] logfile...
+.sp
+\fBsyslog\-summary\fP [\-h | \-\-help]
 .SH "DESCRIPTION"
-.PP
-This manual page documents briefly the
-\fBsyslog\-summary\fR
-command\.
-.PP
-\fBsyslog\-summary\fR
-summarizes the contents of log files via the
-\fBsyslog\fR(3)
-service, by displaying each unique (except for the time) line once, and also the number of times such a line occurs in the input\. The lines are displayed in the order they occur in the input\.
+.sp
+This manual page documents briefly the \fBsyslog\-summary\fP command.
+.sp
+\fBsyslog\-summary\fP summarizes the contents of log files via the \fBsyslog(3)\fP
+service, by displaying each unique (except for the time) line once, and
+also the number of times such a line occurs in the input. The lines are
+displayed in the order they occur in the input.
 .SH "OPTIONS"
-.PP
-\fB\-i \fR\fB\fIfilename\fR\fR, \fB\-\-ignore=\fR\fB\fIfilename\fR\fR
+.sp
+\fB\-i\fP filename, *\-\-ignore=*filename
 .RS 4
-Read regular expressions from
-\fIfilename\fR
-and ignore lines in the logfiles that match them\.
+Read regular expressions from filename and ignore lines in the
+logfiles that match them.
 .RE
-.PP
-\fB\-s \fR\fB\fIfilename\fR\fR, \fB\-\-state=\fR\fB\fIfilename\fR\fR
+.sp
+\fB\-s\fP filename, *\-\-state=*filename
 .RS 4
-Read state information from
-\fIfilename\fR\. The state contains information about the already reported parts of a log file, and prevents
-\fBsyslog\-summary\fR
-from reporting the same things many times\. This is useful when
-\fBsyslog\-summary\fR
-is run from
-\fBcrontab\fR
-every hour\. The file is created, if it doesn\'t exist already\.
+Read state information from filename. The state contains
+information about the already reported parts of a log file, and
+prevents \fBsyslog\-summary\fP from reporting the same things many times.
+This is useful when \fBsyslog\-summary\fP is run from \fBcrontab\fP every hour.
+The file is created, if it doesn´t exist already.
 .RE
-.PP
-\fB\-r\fR, \fB\-\-repeat\fR
+.sp
+\fB\-r\fP, \fB\-\-repeat\fP
 .RS 4
-Merge "last message repeated * times" lines with the repeated event\.
+Merge \(lqlast message repeated * times\(rq lines with the repeated
+event.
 .RE
-.PP
-\fB\-d\fR, \fB\-\-debug\fR
+.sp
+\fB\-d\fP, \fB\-\-debug\fP
 .RS 4
-Enable verbose messages when errors occur (i\.e\. "debug mode")\.
+Enable verbose messages when errors occur (i.e. "debug mode").
 .RE
-.PP
-\fB\-h\fR, \fB\-\-help\fR
+.sp
+\fB\-h\fP, \fB\-\-help\fP
+Show summary of options.
+.sp
+\fB\-R\fP filename, *\-\-rewrite=*filename
 .RS 4
-Show summary of options\.
+Read regular expressions from filename and rewrite lines in the
+logfiles that match them.
 .RE
-.SH "FILES"
-.PP
-\fI/etc/syslog\-summary/ignore\.rules\fR
+.SS "FILES"
+.sp
+\fI/etc/syslog\-sumary/ignore.rules\fP
 .RS 4
-Default ignore\.rules file with default regular expressions\.
+Default \f(CRignore.rules\fP file with default regular expressions.
 .RE
-.SH "DIAGNOSTICS"
-.PP
-When reporting a bug, please run
-\fBsyslog\-summary\fR
-with the
-\fB\-d\fR
-(or
-\fB\-\-debug\fR) flag enabled\.
-.PP
-\fBsyslog\-summary\fR
-provides some return codes, that can be used in scripts:
-.\" line length increase to cope w/ tbl weirdness
-.ll +(\n(LLu * 62u / 100u)
+.SS "DIAGNOSTICS"
+.sp
+When reporting a bug, please run \fBsyslog\-summary\fP with the \fB\-d\fP (or
+\fB\-\-debug\fP) flag enabled.
+.sp
+\fBsyslog\-summary\fP provides some return codes, that can be used in scripts:
+.sp
+.it 1 an-trap
+.nr an-no-space-flag 1
+.nr an-break-flag 1
+.br
+.B Table 1. return codes
 .TS
-ll.
-\fICode\fR	\fIDiagnostic\fR
+allbox tab(:);
+lt lt.
 T{
-\fB0\fR
-T}	T{
-Program exited successfully\.
+.sp
+Code
+T}:T{
+.sp
+Diagnostic
 T}
 T{
-\fB1\fR
-T}	T{
-Something went wrong, please run the program with the debug messages enabled\.
+.sp
+0
+T}:T{
+.sp
+Program exited succesfully.
+T}
+T{
+.sp
+1
+T}:T{
+.sp
+Something went wrong, please run the program with the debug messages enabled.
 T}
 .TE
-.\" line length decrease back to previous value
-.ll -(\n(LLu * 62u / 100u)
 .sp
-.SH "AUTHORS"
-.PP
-\fBLars Wirzenius\fR <\&liw@iki\.fi\&>
-.sp -1n
-.IP "" 4
-Wrote this manpage for the Debian system\.
-.sp -1n
-.IP "" 4
-Wrote the first version of syslog\-summary\.
-.sp -1n
-.IP "" 4
-Maintained the Debian package from 1998 to 2000\.
-.PP
-\fBTommi Virtanen\fR <\&tv@debian\.org\&>
-.sp -1n
-.IP "" 4
-Maintained the package from 2001 to early 2008\.
-.PP
-\fBDavid Paleino\fR <\&d\.paleino@gmail\.com\&>
-.sp -1n
-.IP "" 4
-Maintains the package since early 2008\.
-.SH "COPYRIGHT"
+.SS "AUTHORS"
+.sp
+\fBLars Wirzenius\fP <\c
+.MTO "liw\(atiki.fi" "" ">"
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Wrote this manpage for the Debian system.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Wrote the first version of syslog\-summary.
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Maintained the Debian package from 1998 to 2000.
+.RE
+.RE
+.sp
+\fBTommi Virtanen\fP <\c
+.MTO "tv\(atdebian.org" "" ">"
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Maintained the package from 2001 to early 2008.
+.RE
+.RE
+.sp
+\fBDavid Paleino\fP <\c
+.MTO "d.paleino\(atgmail.com" "" ">"
+.RS 4
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Maintains the package since early 2008.
+.RE
+.RE
+.SS "COPYRIGHT"
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
 Copyright \(co 2008 David Paleino
-.br
-Copyright \(co 2001-2007 Tommi Virtanen
-.br
-Copyright \(co 1998-2000 Lars Wirzenius
-.br
-.PP
-This manual page was written for the Debian system (but may be used by others)\.
-.PP
-Permission is granted to copy, distribute and/or modify this document under the terms of the GNU General Public License, Version 3 or (at your option) any later version published by the Free Software Foundation\.
-.PP
-On Debian systems, the complete text of the GNU General Public License can be found in
-\fI/usr/share/common\-licenses/GPL\fR\.
+.RE
 .sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Copyright \(co 2001\-2007 Tommi Virtanen
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.  sp -1
+.  IP \(bu 2.3
+.\}
+Copyright \(co 1998\-2000 Lars Wirzenius
+.RE
+.sp
+This manual page was written for the Debian system (but may be used by
+others).
+.sp
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License, Version 3 or (at
+your option) any later version published by the Free Software
+Foundation.
+.sp
+On Debian systems, the complete text of the GNU General Public License
+can be found in \fI/usr/share/common\-licenses/GPL\fP.
+.SH "AUTHOR"
+.sp
+Lars Wirzenius

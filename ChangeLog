@@ -1,3 +1,9 @@
+v2.0
+
+  * bumping version number to 2.0 because switching from Python2 to Python3
+  * Added customizable rewrite rules
+  * switched manpage generation from XML to AsciiDoctor
+
 syslog-summary (1.14)
 
   * Added ability to read gzip compressed files, using python-magic or, if
