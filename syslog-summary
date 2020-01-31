@@ -1,7 +1,8 @@
-#!/usr/bin/env python2.5
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Copyright © 2008, David Paleino <d.paleino@gmail.com>
+# Copyright © 2020, Alejandro Liu
+#           © 2008, David Paleino <d.paleino@gmail.com>
 #           © 2001-2008, Tommi Virtanen <tv@debian.org>
 #           © 1998-2000, Lars Wirzenius <liw@iki.fi>
 # 
@@ -68,7 +69,7 @@ def io_error(err, filename, die=True):
 		if die:
 			traceback.print_exc(file=sys.stderr)
 		else:
-			print "[E] %s [%s(%s) - %s]" % (os.strerror(num), errno.errorcode[num], num, filename)
+			print("[E] %s [%s(%s) - %s]" % (os.strerror(num), errno.errorcode[num], num, filename))
 
 	if die:
 		sys.exit(1)
@@ -78,7 +79,7 @@ def read_patterns(filename):
 	pats = []
 	try:
 		f = open(filename, "r")
-	except IOError, e:
+	except IOError as e:
 		io_error(e, filename, False)
 		return []
 	for line in f:
@@ -97,7 +98,7 @@ def read_states(filename):
 		return states
 	try:
 		f = open(filename, "r")
-	except IOError, e:
+	except IOError as e:
 		io_error(e, filename, False)
 		return states
 	for line in f:
@@ -111,9 +112,9 @@ def save_states(filename, states):
 		return
 	try:
 		f = open(filename, "w")
-	except IOError, e:
+	except IOError as e:
 		io_error(e, filename, True)
-	for filename in states.keys():
+	for filename in list(states.keys()):
 		value = states[filename]
 		f.write("%s %d %s\n" % (filename, value[0], value[1]))
 	f.close()
@@ -129,7 +130,7 @@ def split_date(line):
 		m = pat.match(line)
 		if m:
 			return line[:m.end()], line[m.end():]
-	print "line has bad date", "<" + string.rstrip(line) + ">"
+	print("line has bad date", "<" + line.rstrip() + ">")
 	return None, line
 
 def is_gzipped(filename):
@@ -146,7 +147,7 @@ def is_gzipped(filename):
 		from os.path import splitext
 		
 		if not QUIET:
-			print "Using fallback detection... please install python-magic for better gzip detection."
+			print("Using fallback detection... please install python-magic for better gzip detection.")
 		
 		if splitext(filename)[1] == ".gz":
 			return True
@@ -158,7 +159,7 @@ def summarize(filename, states):
 	order = []
 	ignored_count = 0
 	if not QUIET:
-		print "Summarizing %s" % filename
+		print("Summarizing %s" % filename)
 	
 	# If the file is a gzipped log, open it
 	# using the proper function from the gzip
@@ -168,7 +169,7 @@ def summarize(filename, states):
 			file = gzopen(filename, "rb")
 		else:
 			file = open(filename, "r")
-	except IOError, e:
+	except IOError as e:
 		io_error(e, filename, True)
 		
 	linecount = 0
@@ -176,11 +177,11 @@ def summarize(filename, states):
 	shaobj = hashlib.sha256()
 	if filename in states:
 		oldlines, oldsha = states[filename]
-		for i in xrange(oldlines):
+		for i in range(oldlines):
 			line = file.readline()
 			shaobj.update(line)
-		print "OLD-new: %s" % shaobj.hexdigest()
-		print "OLD-file: %s" % oldsha
+		print("OLD-new: %s" % shaobj.hexdigest())
+		print("OLD-file: %s" % oldsha)
 		if shaobj.hexdigest() != oldsha:
 			#file.seek(0, 0)
 			file.seek(0)
@@ -188,21 +189,21 @@ def summarize(filename, states):
 		else:
 			linecount = oldlines
 	if not QUIET:
-		print "%8d Lines skipped (already processed)" % linecount
+		print("%8d Lines skipped (already processed)" % linecount)
 
 	line = file.readline()
 	previous = None
-	print "BEFORE-while: %s" % shaobj.hexdigest()
+	print("BEFORE-while: %s" % shaobj.hexdigest())
 	foo=0
 	while line:
 		foo+=1
-		shaobj.update(line)
+		shaobj.update(line.encode('utf-8'))
 		linecount += 1
 		
 		if should_be_ignored(line):
 			ignored_count += 1
 			if DEBUG:
-				print "Ignoring: %s" % line
+				print("Ignoring: %s" % line)
 			line = file.readline()
 		
 		date, rest = split_date(line)
@@ -219,7 +220,7 @@ def summarize(filename, states):
 			count = int(repeated.group(1))
 			rest = previous
 
-		if counts.has_key(rest):
+		if rest in counts:
 			counts[rest] = counts[rest] + count
 		else:
 			assert count == 1
@@ -231,25 +232,25 @@ def summarize(filename, states):
 		line = file.readline()
 	file.close()
 
-	print "TOT-lines: %d" % linecount
-	print "TOT-ignor: %d" % ignored_count
-	print "AFTER-while: %s" % shaobj.hexdigest()
-	print foo
+	print("TOT-lines: %d" % linecount)
+	print("TOT-ignor: %d" % ignored_count)
+	print("AFTER-while: %s" % shaobj.hexdigest())
+	print(foo)
 	states[filename] = (linecount + ignored_count, shaobj.hexdigest())
-	print states
+	print(states)
 	
 	if QUIET and order:
-		print "Summarizing %s" % filename
+		print("Summarizing %s" % filename)
 	if not QUIET or order:
-		print "%8d Patterns to ignore" % len(ignore_pats)
-		print "%8d Ignored lines" % ignored_count
+		print("%8d Patterns to ignore" % len(ignore_pats))
+		print("%8d Ignored lines" % ignored_count)
 	for rest in order:
-		print "%8d %s" % (counts[rest], rest),
+		print("%8d %s" % (counts[rest], rest), end=' ')
 	if not QUIET or order:
-		print
+		print()
 
 def show_usage(opt = ""):
-	print """Syslog-Summary %s
+	print("""Syslog-Summary %s
 Usage: syslog-summary [options] <logfile> [<logfile> ...]
 
 Options available:
@@ -268,10 +269,10 @@ Options available:
 -h
 --help             show this help message and exit
 
-This program must be run with proper privileges to read log files!""" % version
+This program must be run with proper privileges to read log files!""" % version)
 	
 	if opt:
-		print "Option \"%s\" not recognized." % opt
+		print("Option \"%s\" not recognized." % opt)
 	
 	sys.exit(0)
 
