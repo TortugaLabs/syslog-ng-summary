@@ -143,7 +143,7 @@ def read_rwrules(filename):
 		rules.append( ( re.compile(pair[0],flags), pair[1] ) )
 
 	f.close()
-	print(rules)
+	# ~ print(rules)
 	return rules
 
 
