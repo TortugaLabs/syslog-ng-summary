@@ -215,6 +215,15 @@ def is_gzipped(filename):
 		else:
 			return False
 
+def only_bytes(text):
+	if isinstance(text,str): return text.encode('utf-8')
+	return text
+
+def read_strline(file):
+	line = file.readline()
+	if isinstance(line,bytes): return str(line, 'utf-8')
+	return line
+
 def summarize(filename, states):
 	counts = {}
 	order = []
@@ -227,7 +236,7 @@ def summarize(filename, states):
 	# module.
 	try:
 		if is_gzipped(filename):
-			file = gzopen(filename, "rb")
+			file = gzopen(filename, "r")
 		else:
 			file = open(filename, "r")
 	except IOError as e:
@@ -240,7 +249,7 @@ def summarize(filename, states):
 		oldlines, oldsha = states[filename]
 		for i in range(oldlines):
 			line = file.readline()
-			shaobj.update(line.encode('utf-8'))
+			shaobj.update(only_bytes(line))
 		# ~ print("OLD-new: %s" % shaobj.hexdigest())
 		# ~ print("OLD-file: %s" % oldsha)
 		if shaobj.hexdigest() != oldsha:
@@ -252,20 +261,20 @@ def summarize(filename, states):
 	if not QUIET:
 		print("%8d Lines skipped (already processed)" % linecount)
 
-	line = file.readline()
+	line = read_strline(file)
 	previous = None
 	# ~ print("BEFORE-while: %s" % shaobj.hexdigest())
 	foo=0
 	while line:
 		foo+=1
-		shaobj.update(line.encode('utf-8'))
+		shaobj.update(only_bytes(line))
 		linecount += 1
 		
 		if should_be_ignored(line):
 			ignored_count += 1
 			if DEBUG:
 				print("Ignoring: %s" % line)
-			line = file.readline()
+			line = read_strline(file)
 
 		line = rewrite_line(line)
 
@@ -292,7 +301,7 @@ def summarize(filename, states):
 
 		if not repeated:
 			previous = rest
-		line = file.readline()
+		line = read_strline(file)
 	file.close()
 
 	# ~ print("TOT-lines: %d" % linecount)
